@@ -73,8 +73,11 @@ uno de los métodos más antiguos para manejar la asincronía en JavaScript.
 
 * async/await: La sintaxis async/await proporciona una forma más sencilla y legible de trabajar con promesas. Permite escribir código asincrónico de manera
 similar al código síncrono, lo que facilita la gestión de la asincronía.
+
 Estos son algunos de los principales mecanismos para gestionar la asincronía en JavaScript. La elección de cuál utilizar depende de la complejidad de tu aplicación
 y de tus preferencias personales. Cada uno de estos métodos tiene sus ventajas y desventajas, por lo que es importante seleccionar el más adecuado para tu caso
 particular.
 
 */
+
+
