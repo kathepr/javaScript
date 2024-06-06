@@ -1,7 +1,7 @@
 import { getUser } from "./users.js";
 
 const validateAddPost= async({userId, title, body}) => {
-    if(typeof userId !== "number" || userId === undefined) return {status: 406, message: `El dato ${userId} recibido no cumple con el tipo de dato ${typeof userId}.`};
+    if(typeof userId !== "string" || userId === undefined) return {status: 406, message: `El dato ${userId} recibido no cumple con el tipo de dato ${typeof userId}.`};
     if(typeof title !== "string" || title === undefined) return {status: 406, message: `El dato ${title} recibido no cumple con el tipo de dato ${typeof title}.`};
     if(typeof body !== "string" || body === undefined) return {status: 406, message: `El dato ${body} recibido no cumple con el tipo de dato ${typeof body}.`};
     let user = await (getUser({userId}));
@@ -20,7 +20,7 @@ export const addPost = async(arg) => {
         body: JSON.stringify(arg)
     }
 
-    let res = await fetch("https://jsonplaceholder.typicode.com/posts", config)
+    let res = await fetch("http://172.16.101.146:5800/posts", config)
     let data = await res.json();
     return data
 }
