@@ -5,6 +5,78 @@ import {addUser} from "../module/users.js";
 import { addComment } from "../module/comments.js";
 
 
+let menuAlbums = async() => {
+    let menu = prompt(`
+
+    Album Menu 
+
+    1.Search All
+    2.Add
+    3.Delete
+    
+
+`,1);
+    menu = Number(menu);
+    if (menu == 1) {
+        let res = await getAllALbums();
+    };
+    if (menu == 2){
+        let userId = prompt("Ingrese el id del usuario");
+        let title = prompt("Ingrese el titulo del album", "Gallery");
+        console.table(await addAlbum({userId, title}))
+    }
+    if (menu==3) {
+        let id = prompt("Enter ID of the album that you want to delete")
+        console.table(await deleteAlbum({id}))
+    }
+}
+
+
+let menuPosts = async() => {
+    let menu = prompt(`
+
+    Album Posts 
+
+    1.Search All
+    2.Add
+    3.Delete
+    
+
+`,1);
+    menu = Number(menu);
+    if (menu == 2){
+        let userId = prompt("Ingrese el id del usuario");
+        let title = prompt("Ingrese el titulo del album", "Gallery");
+        console.table(await addAlbum({userId, title}))
+        let body = promt("Ingrese el contenido de la publicacion.")
+        return await addPost({userId, title, body})
+    }
+    if (menu==3) {
+        let id = prompt("Enter ID of the album that you want to delete")
+        console.table(await deleteAlbum({id}))
+    };
+}
+
+let opc = null;
+
+do{
+    let opc = promt(`
+
+    Select an Option
+
+    1. Albums
+    2. Posts
+    0. Exit
+
+`,1);
+    opc = Number(opc);
+    if(opc == 1) alert(JSON.stringify(await menuAlbums(), null, 4));
+    if(opc == 2) alert(JSON.stringify(await menuPosts(), null, 4));
+
+
+} while(opc)
+
+
 
 // console.table(await getAllALbums());
 // addAlbum({userId: 10, title:"Hello World"})
