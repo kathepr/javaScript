@@ -1,5 +1,12 @@
 import { getUser } from "./users.js";
 
+export const getAllTodos = async() => {
+    let res = await fetch("http://172.16.101.146:5800/todos");
+    let data = await res.json();
+    return data
+}
+
+
 const validateAddTodos= async({userId, title, completed}) => {
     if(typeof userId !== "string" || userId === undefined) return {status: 406, message: `El dato ${userId} recibido no cumple con el tipo de dato ${typeof userId}.`};
     if(typeof title !== "string" || title === undefined) return {status: 406, message: `El dato ${title} recibido no cumple con el tipo de dato ${typeof title}.`};
