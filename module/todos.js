@@ -24,3 +24,25 @@ export const addTodos = async(arg) => {
     let data = await res.json();
     return data
 }
+
+
+const validateDeleteTodos = async ({id}) => {
+    if (typeof id !== "string" || id === undefined) return {status: 406, message: "El id del todo no cumple con el tipo de dato."};
+}
+
+export const deleteTodos = async (arg) => {
+    let val = await validateDeleteTodos(arg);
+    if (val) return val;
+    
+    let config = {
+        method: "DELETE",
+        headers: {"Content-Type": "application/json"},
+    };
+    
+    let res = await fetch(`http://172.16.101.146:5802/todos/${arg.id}`, config);
+    if (res.status === 404) return {status: 204, message: "El todo que desea eliminar no está registrado"};
+    let data = await res.json();
+    data.status = 202;
+    data.message = `El todo ${arg.id} fue eliminado de la base de datos`;
+    return data;
+}
