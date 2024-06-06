@@ -1,8 +1,8 @@
-import { getAllALbums, addAlbum, deleteAlbum } from "../module/album.js";
-import { addPost } from "../module/post.js";
-import { addTodos } from "../module/todos.js";
-import {addUser} from "../module/users.js";
-import { addComment } from "../module/comments.js";
+import { getAllAlbums, addAlbum, deleteAlbum } from "../module/album.js";
+import { addPost, deletePost, getAllPosts } from "../module/post.js";
+import { addTodos, deleteTodos } from "../module/todos.js";
+import {addUser, deleteUser} from "../module/users.js";
+import { addComment, deleteComment } from "../module/comments.js";
 
 
 let menuAlbums = async() => {
@@ -18,7 +18,7 @@ let menuAlbums = async() => {
 `,1);
     menu = Number(menu);
     if (menu == 1) {
-        let res = await getAllALbums();
+        let res = await getAllAlbums();
     };
     if (menu == 2){
         let userId = prompt("Ingrese el id del usuario");
@@ -44,6 +44,9 @@ let menuPosts = async() => {
 
 `,1);
     menu = Number(menu);
+    if (menu == 1) {
+        let res = await getAllPosts();
+    };
     if (menu == 2){
         let userId = prompt("Ingrese el id del usuario");
         let title = prompt("Ingrese el titulo del album", "Gallery");
@@ -53,7 +56,7 @@ let menuPosts = async() => {
     }
     if (menu==3) {
         let id = prompt("Enter ID of the album that you want to delete")
-        console.table(await deleteAlbum({id}))
+        console.table(await deletePost({id}))
     };
 }
 
@@ -127,3 +130,7 @@ do{
 
 
 // console.log(await deleteAlbum({id: "48b7"}))
+// console.log(await deleteComment({id: " "}))
+// console.log(await deletePost({id: " "}))
+// console.log(await deleteTodos({id: " "}))
+// console.log(await deleteUser({id: " "}))
