@@ -39,7 +39,7 @@ export const deleteTodos = async (arg) => {
         headers: {"Content-Type": "application/json"},
     };
     
-    let res = await fetch(`http://172.16.101.146:5802/todos/${arg.id}`, config);
+    let res = await fetch(`http://172.16.101.146:5800/todos/${arg.id}`, config);
     if (res.status === 404) return {status: 204, message: "El todo que desea eliminar no está registrado"};
     let data = await res.json();
     data.status = 202;
