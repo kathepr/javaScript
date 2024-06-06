@@ -1,5 +1,11 @@
 import { getUser } from "./users.js";
 
+export const getAllPosts = async() => {
+    let res = await fetch("http://172.16.101.146:5800/posts");
+    let data = await res.json();
+    return data
+}
+
 const validateAddPost= async({userId, title, body}) => {
     if(typeof userId !== "string" || userId === undefined) return {status: 406, message: `El dato ${userId} recibido no cumple con el tipo de dato ${typeof userId}.`};
     if(typeof title !== "string" || title === undefined) return {status: 406, message: `El dato ${title} recibido no cumple con el tipo de dato ${typeof title}.`};
@@ -24,8 +30,6 @@ export const addPost = async(arg) => {
     let data = await res.json();
     return data
 }
-
-
 
 
 const validateDeletePost = async ({id}) => {
