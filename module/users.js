@@ -2,13 +2,17 @@ const validateGetUser= async({userId}) => {
     if(typeof userId !== "number" || userId === undefined) return {status: 406, message: `El dato ${userId} recibido no cumple con el tipo de dato ${typeof userId}.`}
 }
 
-
+export const getAllUsers = async() => {
+    let res = await fetch("http://172.16.101.146:5804/users");
+    let data = await res.json();
+    return data
+}
 
 
 export const getUser = async(arg) =>{
     let val = await validateGetUser(arg);
     if(val) return val;
-    let res = await fetch(`http://172.16.101.146:5800/users/${arg.userId}`)
+    let res = await fetch(`http://172.16.101.146:5804/users/${arg.userId}`)
     if(res.status === 404) return {status: 204, message: `Username does not exist`}
     let data = await res.json();
     return data
@@ -53,5 +57,28 @@ export const addUser = async(arg) => {
 
     let res = await fetch("http://172.16.101.146:5804/users", config);
     let data = await res.json();
+    return data;
+}
+
+
+
+const validateDeleteUser = async ({id}) => {
+    if (typeof id !== "string" || id === undefined) return {status: 406, message: "El id del usuario no cumple con el tipo de dato."};
+}
+
+export const deleteUser = async (arg) => {
+    let val = await validateDeleteUser(arg);
+    if (val) return val;
+    
+    let config = {
+        method: "DELETE",
+        headers: {"Content-Type": "application/json"},
+    };
+    
+    let res = await fetch(`http://172.16.101.146:5804/users/${arg.id}`, config);
+    if (res.status === 404) return {status: 204, message: "El usuario que desea eliminar no está registrado"};
+    let data = await res.json();
+    data.status = 202;
+    data.message = `El usuario ${arg.id} fue eliminado de la base de datos`;
     return data;
 }
