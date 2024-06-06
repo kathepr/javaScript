@@ -28,3 +28,25 @@ export const addComment = async(arg) => {
     return data;
 }
 
+const validateDeleteComment = async ({id}) => {
+    if(typeof id !== "string" || id === undefined) return {status: 406, message: "El id del comentario no cumple con el tipo de dato."}
+}
+
+
+
+export const deleteComment = async(arg) => {
+    let val = await validateDeleteComment(arg);
+    if(val) return val;
+    
+    let config = {
+        method: "DELETE",
+        headers: {"Content-Type": "application/json"},
+    };
+    
+    let res = await fetch(`http://172.16.101.146:5801/comments/${arg.id}`, config);
+    if (res.status === 404) return {status: 204, message: "El comentario que desea eliminar no está registrado"}
+    let data = await res.json();
+    data.status = 202
+    data.message = `El comentario ${arg.id} fue eliminado de la base de datos`
+    return data;
+}
