@@ -8,6 +8,7 @@ export const getAllAlbums = async() => {
 }
 
 
+
 const validateAddAlbum = async({userId,title}) =>{
     if(typeof userId !== "string" || userId === undefined) return {status: 406, message: `El dato ${userId} recibido no cumple con el tipo de dato ${typeof userId}.`}
     if(typeof title !== "string" || title === undefined) return {status: 406, message: `El dato ${title} recibido no cumple con el tipo de dato ${typeof title}.`}
@@ -27,6 +28,51 @@ export const addAlbum = async(arg)=>{
     let data = await res.json();
     return data;
 }
+
+const validateUpdateAlbum = async({id, userId, title}) =>{
+    let album = await getAlbum({id})
+    if(album.status == 204) return album;
+    title = (title && typeof title != "string") ? title: album.title;
+    
+    let user = await getUser({userId})
+    if(user.status == 204) return {status: 200, message: `El usuario no existe`}
+
+    
+    album = {...album, userId, title};
+    return album
+
+}
+
+export const updateAlbum = async(arg) =>{
+    let val = await validateUpdateAlbum(arg);
+    if(val.status) return val;
+    let{id} = val;
+    let config = {
+        method: "PUT",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify(val)
+    }
+    let res = await fetch(`http://172.16.101.146:5802/albums/${id}`, config);
+    let data = await res.json();
+    return data;
+}
+
+
+
+export const getAlbum = async(id) => {
+    let res = await fetch(`http://172.16.101.146:5802/albums/${id}`);
+    if(res.status === 404) return {status: 204, message: `El album que buscas, no está registrado en la base de datos`}
+    let data = await res.json();
+    return data
+}
+
+
+
+
+
+
+
+
 
 
 
@@ -50,6 +96,13 @@ export const deleteAlbum = async(arg) => {
     data.message = `The album ${arg.id} was deleted from database`
     return data;
 }
+
+
+
+
+
+
+
 
 /*
 
