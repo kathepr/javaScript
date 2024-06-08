@@ -1,107 +1,88 @@
 import { getUser } from "./users.js";
 
+export const getAllAlbums = async () => {
+  let res = await fetch("http://172.16.101.146:5802/albums");
+  let data = await res.json();
+  return data;
+};
 
-export const getAllAlbums = async() => {
-    let res = await fetch("http://172.16.101.146:5802/albums");
-    let data = await res.json();
-    return data
+
+export const getAlbum = async ({id}) => {
+
+  let res = await fetch(`http://172.16.101.146:5802/albums/${id}`);
+  if (res.status === 404) return { status: 204, message: `Album does not exist` }
+  let data = await res.json();
+  return data;
+};
+
+const validateAddAlbum = async ({ userId, title }) => {
+  if (typeof userId != "string" || userId === undefined) return { status: 406, message: `The data for user ${userId} is either not arriving or does not conform to the required format` }
+  if (typeof title !== "string" || title === undefined) return { status: 406, message: `The data for ${title} is either not arriving or does not conform to the required format.` }
+  let user = await getUser({ userId })
+  if (user.status == 204) return { status: 200, message: `Username doesn't exist` }
 }
 
+export const addAlbum = async (arg) => {
+  let val = await validateAddAlbum(arg);
+  if (val) return val;
+  let config = {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(arg)
+  };
+  let res = await fetch("http://172.16.101.146:5802/albums", config);
+  let data = await res.json();
+  return data;
+};
 
-
-const validateAddAlbum = async({userId,title}) =>{
-    if(typeof userId !== "string" || userId === undefined) return {status: 406, message: `El dato ${userId} recibido no cumple con el tipo de dato ${typeof userId}.`}
-    if(typeof title !== "string" || title === undefined) return {status: 406, message: `El dato ${title} recibido no cumple con el tipo de dato ${typeof title}.`}
-    let user = await getUser({userId});
-    if(user.status == 204) return {status: 200, message: `El usuario no existe.`}
+const validateUpdateAlbum = async ({ id, userId, title }) => {
+  let album = await getAlbum({ id });
+  if (album.status == 204) return album;
+  title = (title && typeof title =="string") ? title : album.title;
+  
+  let user = await getUser({ userId })
+  if (user.status == 204) return { status: 200, message: `Username does not exist` }
+  
+  album = {...album, userId, title};
+  return album;
 }
 
-export const addAlbum = async(arg)=>{
-    let val = await validateAddAlbum(arg);
-    if(val) return val;
-    let config = {
-        method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify(arg)
-    }
-    let res = await fetch("http://172.16.101.146:5802/albums", config)
-    let data = await res.json();
-    return data;
+export const updateAlbum = async (arg) => {
+  let val = await validateUpdateAlbum(arg);
+  if (val.status) return val;
+  let { id } = val;
+  let config = {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(val)
+  };
+  let res = await fetch(`http://172.16.101.146:5802/albums/${id}`, config);
+  let data = await res.json();
+  return data;
 }
 
-const validateUpdateAlbum = async({id, userId, title}) =>{
-    let album = await getAlbum({id})
-    if(album.status == 204) return album;
-    title = (title && typeof title != "string") ? title: album.title;
-    
-    let user = await getUser({userId})
-    if(user.status == 204) return {status: 200, message: `El usuario no existe`}
-
-    
-    album = {...album, userId, title};
-    return album
-
+export const patchAlbum = async (id, arg) => {
+  let config = {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(arg)
+  };
+  let res = await fetch(`http://172.16.101.146:5802/albums/${id}`, config);
+  let data = await res.json();
+  return data;
 }
 
-export const updateAlbum = async(arg) =>{
-    let val = await validateUpdateAlbum(arg);
-    if(val.status) return val;
-    let{id} = val;
-    let config = {
-        method: "PUT",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify(val)
-    }
-    let res = await fetch(`http://172.16.101.146:5802/albums/${id}`, config);
-    let data = await res.json();
-    return data;
+export const deleteAlbum = async (albumId) => {
+  let config = {
+    method: "DELETE"
+  };
+  let res = await fetch(`http://172.16.101.146:5802/albums/${albumId}`, config);
+  if (res.status === 404) return { status: 204, message: "the album id does not exist or has an unaccepted format" }
+  let data = await res.json();
+  data.status = 202;
+  data.message = `The album ${albumId} was deleted from the database`
+  return data;
 }
-
-
-
-export const getAlbum = async(id) => {
-    let res = await fetch(`http://172.16.101.146:5802/albums/${id}`);
-    if(res.status === 404) return {status: 204, message: `El album que buscas, no está registrado en la base de datos`}
-    let data = await res.json();
-    return data
-}
-
-
-
-
-
-
-
-
-
-
-
-const validateDeleteAlbum = async({id}) => {
-    if(typeof id !== "string" || id === undefined) return {status: 406, message: "El id del album no cumple con el tipo de dato."}
-}
-
-export const deleteAlbum = async(arg) => {
-    let val = await validateDeleteAlbum(arg);
-    if(val) return val;
-    
-    let config = {
-        method: "DELETE",
-        headers: {"Content-Type": "application/json"},
-    };
-    
-    let res = await fetch(`http://172.16.101.146:5802/albums/${arg.id}`, config);
-    if (res.status === 404) return {status: 204, message: "El album que desea eliminar no está registrado"}
-    let data = await res.json();
-    data.status = 202
-    data.message = `The album ${arg.id} was deleted from database`
-    return data;
-}
-
-
-
-
-
-
 
 
 /*
