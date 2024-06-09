@@ -1,40 +1,32 @@
 import { getUser } from "./users.js";
-
-export const getAllTodos = async() => {
-    let res = await fetch("http://172.16.101.146:5800/todos");
+export const getAllTodos= async () => {
+    let res = await fetch("https://jsonplaceholder.typicode.com/todos");
     let data = await res.json();
-    return data
+    return data;
+};
+
+const validateAddTodos = async ({ userId, title, completed }) => {
+    if (typeof title !== "string" || title === undefined) return { status: 406, message: ` The data ${title} is not arriving or does not comply with the requiered format` }
+    if (typeof completed !== "boolean" || completed === undefined) return { status: 406, message: ` The data ${completed} is not arriving or does not comply with the requiered format` }
+    let user = await getUser({ userId })
+    if (user.status == 204) return { status: 200, message: `User does not exist` }
 }
 
-
-const validateAddTodos= async({userId, title, completed}) => {
-    if(typeof userId !== "string" || userId === undefined) return {status: 406, message: `El dato ${userId} recibido no cumple con el tipo de dato ${typeof userId}.`};
-    if(typeof title !== "string" || title === undefined) return {status: 406, message: `El dato ${title} recibido no cumple con el tipo de dato ${typeof title}.`};
-    if(typeof completed !== "boolean" || completed === undefined) return {status: 406, message: `El dato ${completed} recibido no cumple con el tipo de dato ${typeof completed}.`};
-    let user = await (getUser({userId}));
-    if(user.status == 204) return {status: 200, message: `Username does not exist`}
-  
-}
-
-
-export const addTodos = async(arg) => {
+export const addTodos = async (arg) => {
     let val = await validateAddTodos(arg);
-    if(val) return val;
-
-    const config = {
+    if (val) return val;
+    let config = {
         method: "POST",
-        headers: {"Content-Type": "application/json"},
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(arg)
-    }
-
-    let res = await fetch("http://172.16.101.146:5800/todos", config)
+    };
+    let res = await fetch("https://jsonplaceholder.typicode.com/todos", config);
     let data = await res.json();
-    return data
-}
-
+    return data;
+};
 
 const validateDeleteTodos = async ({id}) => {
-    if (typeof id !== "string" || id === undefined) return {status: 406, message: "El id del todo no cumple con el tipo de dato."};
+    if (typeof id !== "string" || id === undefined) return {status: 406, message: "The data for the ID is either not arriving or does not comply with the required format."};
 }
 
 export const deleteTodos = async (arg) => {
@@ -47,9 +39,9 @@ export const deleteTodos = async (arg) => {
     };
     
     let res = await fetch(`http://172.16.101.146:5800/todos/${arg.id}`, config);
-    if (res.status === 404) return {status: 204, message: "El todo que desea eliminar no está registrado"};
+    if (res.status === 404) return {status: 204, message: "The ID does not exist or is in an unaccepted format."};
     let data = await res.json();
     data.status = 202;
-    data.message = `El todo ${arg.id} fue eliminado de la base de datos`;
+    data.message = `${arg.id} has been deleted from the database.`;
     return data;
 }
