@@ -34,19 +34,6 @@ export const addComments = async (arg) => {
     return data;
 };
 
-export const updateComments = async (arg) => {
-    let val = await validateAddComments(arg);
-    if (val) return val;
-    let {id} = arg
-    let config = {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(arg)
-    };
-    let res = await fetch(`http://172.16.101.146:5801/comments/${id}`, config);
-    let data = await res.json();
-    return data;
-}
 
 const validateUpdateComments = async ({ postId, name, email, body }) => {
     let errors = {};
@@ -78,6 +65,22 @@ const validateUpdateComments = async ({ postId, name, email, body }) => {
         return { status: 200, message: `Post doesn't exist` }
     }
 }
+
+export const updateComments = async (arg) => {
+    let val = await validateUpdateComments(arg);
+    if (val) return val;
+    let {id} = arg
+    let config = {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(arg)
+    };
+    let res = await fetch(`http://172.16.101.146:5801/comments/${id}`, config);
+    let data = await res.json();
+    return data;
+}
+
+
 
 export const patchComments = async (arg) => {
     let val = await validateUpdateComments(arg);
