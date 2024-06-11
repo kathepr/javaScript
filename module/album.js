@@ -61,7 +61,41 @@ export const updateAlbum = async (arg) => {
   return data;
 }
 
-export const patchAlbum = async (id, arg) => {
+const validatepatchAlbum = async ({ userId, title }) => {
+  let errors = {};
+
+  if (userId!== undefined) {
+    if (typeof userId!== "string") {
+      errors.userId = `The userId is either not being received or does not comply with the required format.`;
+    }
+  }
+
+  if (title!== undefined) {
+    if (typeof title!== "string") {
+      errors.title = `The title is either not being received or does not comply with the required format.`;
+    }
+  }
+
+  if (Object.keys(errors).length > 0) {
+    return { status: 406, message: "Data error", errors };
+  }
+
+  let user = await getUser({ userId })
+  if (user.status == 204) {
+    return { status: 200, message: `Username doesn't exist` }
+  }
+}
+
+export const patchAlbum = async (arg) => {
+  let val = await validatepatchAlbum(arg);
+  if (val) {
+    if (val.status === 200) {
+      return val;
+    } else {
+      return { error: "Validation failed", details: val };
+    }
+  }
+  let { id } = arg;
   let config = {
     method: "PATCH",
     headers: { "Content-Type": "application/json" },
